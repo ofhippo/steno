@@ -5,3 +5,5 @@
 .gradle
 build
 out
+src/main/resources/eng.blm
+src/main/resources/vocab_cs
