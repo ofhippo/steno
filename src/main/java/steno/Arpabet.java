@@ -2,20 +2,33 @@ package steno;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public enum Arpabet {
     HH, B, D, DH, F, G, K, L, M, N, P, R, S, UH, T, SH, V, W, Y, Z, IH, AA, UW, EH, AE, CH, AH, OW, OY, ER, AO, ZH, IY, EY, TH, AW, AY, NG, JH;
 
     private static Map<String, List<Arpabet>> dictionary = loadDictionary();
+    private static Map<List<Arpabet>, Set<String>> reverseDictionary = buildReverseDictionary();
+
+    private static Map<List<Arpabet>, Set<String>> buildReverseDictionary() {
+        final Map<List<Arpabet>, Set<String>> inverted = new HashMap<>();
+        for (Map.Entry<String, List<Arpabet>> entry : dictionary.entrySet()) {
+            final String text = entry.getKey();
+            final List<Arpabet> arpabets = entry.getValue();
+            final Set<String> texts = inverted.computeIfAbsent(arpabets, k -> new HashSet<>());
+            texts.add(text.toLowerCase());
+        }
+        return inverted;
+    }
 
     public static List<Arpabet> fromText(String word) {
         //TODO: If not in dictionary, do something like http://www.speech.cs.cmu.edu/tools/lextool.html
         return dictionary.get(word.toUpperCase());
+    }
+
+    public static Set<String> toPossibleTexts(List<Arpabet> arpabets) {
+        return reverseDictionary.get(arpabets);
     }
 
     private static Map<String, List<Arpabet>> loadDictionary() {
