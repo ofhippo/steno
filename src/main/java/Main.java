@@ -1,3 +1,4 @@
+import com.google.common.collect.ImmutableList;
 import edu.berkeley.nlp.lm.NgramLanguageModel;
 import edu.berkeley.nlp.lm.StupidBackoffLm;
 
@@ -6,10 +7,10 @@ import static edu.berkeley.nlp.lm.io.LmReaders.readGoogleLmBinary;
 public class Main {
     public static void main(String [] args) {
         final NgramLanguageModel lm = loadLanguageModel();
-
+        System.out.println(lm.getLogProb(ImmutableList.of("this", "is", "it")));
     }
 
-    public static NgramLanguageModel loadLanguageModel() {
+    private static NgramLanguageModel loadLanguageModel() {
         System.out.println("Loading Language Model (~1 minute)");
         long startTime = System.currentTimeMillis();
         //  Google Books binaries for English from http://tomato.banatao.berkeley.edu:8080/berkeleylm_binaries/
