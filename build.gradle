@@ -11,6 +11,10 @@ repositories {
     mavenCentral()
 }
 
+tasks.withType(JavaExec) {
+    jvmArgs = ['-Xms10000m', '-Xmx10000m']
+}
+
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
     testCompile "org.assertj:assertj-core:3.8.0"
