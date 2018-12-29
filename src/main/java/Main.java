@@ -6,6 +6,10 @@ import static edu.berkeley.nlp.lm.io.LmReaders.readGoogleLmBinary;
 
 public class Main {
     public static void main(String [] args) {
+        final WordToPhonemes wordToPhonemes = new WordToPhonemes();
+        System.out.println(String.join(" | ", wordToPhonemes.toPhonemes("hello")));
+        System.out.println(String.join(" | ", wordToPhonemes.toPhonemes("world")));
+
         final NgramLanguageModel lm = loadLanguageModel();
         System.out.println(lm.getLogProb(ImmutableList.of("this", "is", "it")));
     }
