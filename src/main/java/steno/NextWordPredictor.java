@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 
 import static edu.berkeley.nlp.lm.io.LmReaders.readGoogleLmBinary;
 
-public class NGramFrequencySorter {
+public class NextWordPredictor {
     private static final NgramLanguageModel<String> languageModel = loadLanguageModel();
 
     private static NgramLanguageModel<String> loadLanguageModel() {

@@ -14,20 +14,20 @@ public enum Arpabet {
     private static Map<List<Arpabet>, Set<String>> buildReverseDictionary() {
         final Map<List<Arpabet>, Set<String>> inverted = new HashMap<>();
         for (Map.Entry<String, List<Arpabet>> entry : dictionary.entrySet()) {
-            final String text = entry.getKey();
+            final String word = entry.getKey();
             final List<Arpabet> arpabets = entry.getValue();
-            final Set<String> texts = inverted.computeIfAbsent(arpabets, k -> new HashSet<>());
-            texts.add(text.toLowerCase());
+            final Set<String> words = inverted.computeIfAbsent(arpabets, k -> new HashSet<>());
+            words.add(word.toLowerCase());
         }
         return inverted;
     }
 
-    public static List<Arpabet> fromText(String word) {
+    public static List<Arpabet> fromWord(String word) {
         //TODO: If not in dictionary, do something like http://www.speech.cs.cmu.edu/tools/lextool.html
         return dictionary.get(word.toUpperCase());
     }
 
-    public static Set<String> toPossibleTexts(List<Arpabet> arpabets) {
+    public static Set<String> toPossibleWords(List<Arpabet> arpabets) {
         return reverseDictionary.get(arpabets);
     }
 

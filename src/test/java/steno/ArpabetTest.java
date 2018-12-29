@@ -10,15 +10,15 @@ public class ArpabetTest {
 
     @Test
     public void fromText() {
-        assertThat(Arpabet.fromText("hello")).containsExactly(HH, AH, L, OW);
-        assertThat(Arpabet.fromText("world")).containsExactly(W, ER, L, D);
-        assertThat(Arpabet.fromText("too")).containsExactly(T,  UW);
+        assertThat(Arpabet.fromWord("hello")).containsExactly(HH, AH, L, OW);
+        assertThat(Arpabet.fromWord("world")).containsExactly(W, ER, L, D);
+        assertThat(Arpabet.fromWord("too")).containsExactly(T,  UW);
     }
 
     @Test
     public void toPossibleTexts() {
-        assertThat(Arpabet.toPossibleTexts(ImmutableList.of(HH, AH, L, OW))).isEqualTo(ImmutableSet.of("hello"));
-        assertThat(Arpabet.toPossibleTexts(ImmutableList.of(W, ER, L, D))).isEqualTo(ImmutableSet.of("world", "whirled"));
-        assertThat(Arpabet.toPossibleTexts(ImmutableList.of(T, UW))).isEqualTo(ImmutableSet.of("tu", "tew(2)", "too", "tue", "to", "two", "thuy"));
+        assertThat(Arpabet.toPossibleWords(ImmutableList.of(HH, AH, L, OW))).isEqualTo(ImmutableSet.of("hello"));
+        assertThat(Arpabet.toPossibleWords(ImmutableList.of(W, ER, L, D))).isEqualTo(ImmutableSet.of("world", "whirled"));
+        assertThat(Arpabet.toPossibleWords(ImmutableList.of(T, UW))).isEqualTo(ImmutableSet.of("tu", "tew(2)", "too", "tue", "to", "two", "thuy"));
     }
 }
