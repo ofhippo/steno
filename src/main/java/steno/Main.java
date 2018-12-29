@@ -1,14 +1,16 @@
+package steno;
 import com.google.common.collect.ImmutableList;
 import edu.berkeley.nlp.lm.NgramLanguageModel;
 import edu.berkeley.nlp.lm.StupidBackoffLm;
+
+import java.util.stream.Collectors;
 
 import static edu.berkeley.nlp.lm.io.LmReaders.readGoogleLmBinary;
 
 public class Main {
     public static void main(String [] args) {
-        final WordToPhonemes wordToPhonemes = new WordToPhonemes();
-        System.out.println(String.join(" | ", wordToPhonemes.toPhonemes("hello")));
-        System.out.println(String.join(" | ", wordToPhonemes.toPhonemes("world")));
+        System.out.println(String.join(" | ", Arpabet.fromText("hello").stream().map(Arpabet::name).collect(Collectors.toList())));
+        System.out.println(String.join(" | ", Arpabet.fromText("world").stream().map(Arpabet::name).collect(Collectors.toList())));
 
         final NgramLanguageModel lm = loadLanguageModel();
         System.out.println(lm.getLogProb(ImmutableList.of("this", "is", "it")));
