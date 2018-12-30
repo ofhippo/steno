@@ -25,6 +25,8 @@ public class KeyerTest {
         final ArpabetCompressor compressor = new ArpabetCompressor(IDENTITY_SCHEME);
         final Keyer keyer = new Keyer(compressor);
         assertThat(keyer.scoreText("Yes, I like to read stories by the science fiction author Isaac Asimov!")).isEqualTo(0);
+        assertThat(keyer.scoreText("I need to buy a clarinet reed")).isEqualTo(0);
+        assertThat(keyer.scoreText("The reeds blow in the wind")).isEqualTo(0);
     }
 
     @Test
