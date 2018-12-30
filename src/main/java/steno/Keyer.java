@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Set;
 
 public class Keyer {
-    public static final int MAX_RANK = 20;
+    public static final int MAX_RANK_BEFORE_SPELLING = 2;
     private final ArpabetCompressor compressor;
 
     public Keyer(ArpabetCompressor compressor) {
@@ -45,12 +45,12 @@ public class Keyer {
     private int predictionRankAfterEncodingAndDecoding(String word, List<String> context) {
         final List<Arpabet> trueArpabets = Arpabet.fromWord(word);
         if (trueArpabets == null) {
-            return 0; //TODO
+            return word.length(); //TODO
         }
         final List<Enum> compressed = compressor.encode(trueArpabets);
         final Set<String> possibleWords = compressor.decode(compressed);
         final List<String> rankedWordsByLikelihood = NextWordPredictor.sortByLikelihoodDescending(possibleWords, context);
         final int rank = rankedWordsByLikelihood.indexOf(word);
-        return rank >= 0 && rank < MAX_RANK ? rank : MAX_RANK; //TODO
+        return rank >= 0 && rank <= MAX_RANK_BEFORE_SPELLING ? rank : word.length(); //TODO
     }
 }
