@@ -9,20 +9,21 @@ import java.util.Set;
 
 import static org.assertj.core.api.Java6Assertions.assertThat;
 import static steno.Arpabet.*;
-import static steno.Arpabet.IDENTITY_SCHEME;
+import static steno.Schemes.COLLAPSED_VOWELES;
+import static steno.Schemes.IDENTITY;
 
 public class KeyerTest {
 
     @Test
     public void scoreDictionaryWithoutContext() {
-        final ArpabetCompressor compressor = new ArpabetCompressor(IDENTITY_SCHEME);
+        final ArpabetCompressor compressor = new ArpabetCompressor(COLLAPSED_VOWELES);
         final Keyer keyer = new Keyer(compressor);
         assertThat(keyer.scoreDictionaryWithoutContext()).isBetween(0d, 0.25);
     }
 
     @Test
     public void scoreText() {
-        final ArpabetCompressor compressor = new ArpabetCompressor(IDENTITY_SCHEME);
+        final ArpabetCompressor compressor = new ArpabetCompressor(COLLAPSED_VOWELES);
         final Keyer keyer = new Keyer(compressor);
         assertThat(keyer.scoreText("Yes, I like to read stories by the science fiction author Isaac Asimov!")).isEqualTo(0);
         assertThat(keyer.scoreText("I need to buy a clarinet reed")).isEqualTo(0);
@@ -31,17 +32,15 @@ public class KeyerTest {
 
     @Test
     public void getAllPossibleCombinations() {
-        final ArpabetCompressor compressor = new ArpabetCompressor(IDENTITY_SCHEME);
-        final Keyer keyer = new Keyer(compressor);
-
+        final ArpabetCompressor compressor = new ArpabetCompressor(IDENTITY);
         final List<Arpabet> arpabets = Arpabet.fromWord("cat");
         final List<Enum> compressed = compressor.encode(arpabets);
         final List<Set<Arpabet>> possibleArpabets = compressor.decode(compressed);
 
-        Set<List<Arpabet>> allPossibleCombinations = keyer.getAllPossibleCombinations(possibleArpabets);
+        Set<List<Arpabet>> allPossibleCombinations = Keyer.permutations(possibleArpabets);
         assertThat(allPossibleCombinations).containsExactly(ImmutableList.of(K, AE, T));
 
-        allPossibleCombinations = keyer.getAllPossibleCombinations(ImmutableList.of(
+        allPossibleCombinations = Keyer.permutations(ImmutableList.of(
                 ImmutableSet.of(L, M),
                 ImmutableSet.of(M),
                 ImmutableSet.of(P, R),

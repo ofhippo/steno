@@ -15,7 +15,7 @@ public class ArpabetCompressorTest {
 
     @Test
     public void withIdentity() {
-        final ArpabetCompressor compressor = new ArpabetCompressor(IDENTITY_SCHEME);
+        final ArpabetCompressor compressor = new ArpabetCompressor(Schemes.IDENTITY);
         final List<Enum> encoded = compressor.encode(ImmutableList.of(HH, AH, L, OW));
         assertThat(encoded).containsExactly(HH, AH, L, OW);
         assertThat(compressor.decode(encoded)).containsExactly(
