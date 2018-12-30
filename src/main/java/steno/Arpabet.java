@@ -22,6 +22,8 @@ public enum Arpabet {
         return inverted;
     }
 
+    public static Map<Arpabet, Enum> IDENTITY_SCHEME = Arrays.stream(Arpabet.values()).collect(Collectors.toMap(a -> a, a -> a));
+
     public static List<Arpabet> fromWord(String word) {
         //TODO: If not in dictionary, do something like http://www.speech.cs.cmu.edu/tools/lextool.html
         return dictionary.get(word.toUpperCase());

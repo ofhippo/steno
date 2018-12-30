@@ -5,10 +5,8 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import org.junit.Test;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static steno.Arpabet.*;
@@ -17,8 +15,7 @@ public class ArpabetCompressorTest {
 
     @Test
     public void withIdentity() {
-        final Map<Arpabet, Enum> identityScheme = Arrays.stream(Arpabet.values()).collect(Collectors.toMap(a -> a, a -> a));
-        final ArpabetCompressor compressor = new ArpabetCompressor(identityScheme);
+        final ArpabetCompressor compressor = new ArpabetCompressor(IDENTITY_SCHEME);
         final List<Enum> encoded = compressor.encode(ImmutableList.of(HH, AH, L, OW));
         assertThat(encoded).containsExactly(HH, AH, L, OW);
         assertThat(compressor.decode(encoded)).containsExactly(

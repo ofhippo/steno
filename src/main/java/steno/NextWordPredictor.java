@@ -22,11 +22,12 @@ public class NextWordPredictor {
         return lm;
     }
 
-    public static List<String> sortByLikelihoodDescending(final List<String> context, List<String> candidates) {
+    public static List<String> sortByLikelihoodDescending(final Set<String> candidates, final List<String> context) {
         return candidates.stream().map(candidate -> {
             final List<String> candidateNgram = new ArrayList<>(context);
             candidateNgram.add(candidate);
-            return new Pair<>(candidate, languageModel.getLogProb(candidateNgram));
+            final float logProb = languageModel.getLogProb(candidateNgram);
+            return new Pair<>(candidate, Double.isNaN(logProb) ? Float.NEGATIVE_INFINITY : logProb);
         }).sorted(Comparator.comparingDouble((Pair p) -> (double) (float) p.getValue()).reversed())
                 .map((Pair p) -> (String) p.getKey())
                 .collect(Collectors.toList());
