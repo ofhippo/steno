@@ -1,10 +1,11 @@
 package steno;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class Keyer {
     public static final int MAX_RANK = 20;
@@ -47,48 +48,9 @@ public class Keyer {
             return 0; //TODO
         }
         final List<Enum> compressed = compressor.encode(trueArpabets);
-        final List<Set<Arpabet>> possibleArpabets = compressor.decode(compressed);
-        int numCombinations = 1;
-        for (Set<Arpabet> possibleArpabet : possibleArpabets) {
-            numCombinations *= possibleArpabet.size();
-        }
-        if (numCombinations > 1e5) {
-            return MAX_RANK;
-        }
-
-        final Set<List<Arpabet>> possibleCombinations = permutations(possibleArpabets);
-        final Set<Set<String>> possibleWordSets = possibleCombinations.stream().map(Arpabet::toPossibleWords).collect(Collectors.toSet());
-        final Set<String> possibleWords = new HashSet<>();
-        possibleWordSets.stream().filter(Objects::nonNull).forEach(possibleWords::addAll);
+        final Set<String> possibleWords = compressor.decode(compressed);
         final List<String> rankedWordsByLikelihood = NextWordPredictor.sortByLikelihoodDescending(possibleWords, context);
         final int rank = rankedWordsByLikelihood.indexOf(word);
         return rank >= 0 && rank < MAX_RANK ? rank : MAX_RANK; //TODO
-    }
-
-    //https://stackoverflow.com/questions/17192796/generate-all-combinations-from-multiple-lists
-    public static <T> Set<List<T>> permutations(List<Set<T>> collections) {
-        if (collections == null || collections.isEmpty()) {
-            return new HashSet<>();
-        } else {
-            Set<List<T>> res = new HashSet<>();
-            permutationsImpl(collections, res, 0, new LinkedList<T>());
-            return res;
-        }
-    }
-
-    private static <T> void permutationsImpl(List<Set<T>> ori, Set<List<T>> res, int d, List<T> current) {
-        // if depth equals number of original collections, final reached, add and return
-        if (d == ori.size()) {
-            res.add(current);
-            return;
-        }
-
-        // iterate from current collection and copy 'current' element N times, one for each element
-        Collection<T> currentCollection = ori.get(d);
-        for (T element : currentCollection) {
-            List<T> copy = Lists.newLinkedList(current);
-            copy.add(element);
-            permutationsImpl(ori, res, d + 1, copy);
-        }
     }
 }

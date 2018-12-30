@@ -60,18 +60,22 @@ ZH	seizure	S IY ZH ER
             final String word = entry.getKey();
             final List<Arpabet> arpabets = entry.getValue();
             final Set<String> words = inverted.computeIfAbsent(arpabets, k -> new HashSet<>());
-            words.add(word.toLowerCase());
+            words.add(word);
         }
         return inverted;
     }
 
     public static List<Arpabet> fromWord(String word) {
         //TODO: If not in dictionary, do something like http://www.speech.cs.cmu.edu/tools/lextool.html
-        return dictionary.get(word.toUpperCase());
+        return dictionary.get(word.toLowerCase());
     }
 
     public static Set<String> toPossibleWords(List<Arpabet> arpabets) {
         return reverseDictionary.get(arpabets);
+    }
+
+    public static Map<String, List<Arpabet>> getDictionary() {
+        return dictionary;
     }
 
     private static Map<String, List<Arpabet>> loadDictionary() {
@@ -87,7 +91,7 @@ ZH	seizure	S IY ZH ER
                     break;
                 } else {
                     final String[] wordAndPhonemes = lineJustRead.split("\t");
-                    final String word = wordAndPhonemes[0];
+                    final String word = wordAndPhonemes[0].toLowerCase();
                     final List<Arpabet> phonemes = Arrays.stream(wordAndPhonemes[1].split(" ")).map(Arpabet::valueOf).collect(Collectors.toList());
                     dictionary.put(word, phonemes);
                 }
