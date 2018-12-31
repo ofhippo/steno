@@ -32,7 +32,7 @@ public class Keyer {
 
     public double scoreText(String text) {
         double score = 0;
-        List<String> words = Arrays.asList(text.replaceAll("[^a-zA-Z ]", "").toLowerCase().split("\\s+"));
+        final List<String> words = Arrays.asList(text.replaceAll("[^a-zA-Z \n]", "").toLowerCase().split("\\s+"));
         for (int i = 0; i < words.size(); i++) {
             final String word = words.get(i);
             final List<String> context = words.subList(Math.max(0, i - 4), i);
