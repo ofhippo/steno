@@ -49,7 +49,7 @@ Y 	yield	Y IY L D
 Z 	zee	Z IY
 ZH	seizure	S IY ZH ER
 */
-    HH, B, D, DH, F, G, K, L, M, N, P, R, S, UH, T, SH, V, W, Y, Z, IH, AA, UW, EH, AE, CH, AH, OW, OY, ER, AO, ZH, IY, EY, TH, AW, AY, NG, JH;
+    AA, AE, AH, AO, AW, AY, B, CH, D, DH, EH, ER, EY, F, G, HH, IH, IY, JH, K, L, M, N, NG, OW, OY, P, R, S, SH, T, TH, UH, UW, V, W, Y, Z, ZH;
 
     private static Map<String, List<Arpabet>> dictionary = loadDictionary();
     private static Map<List<Arpabet>, Set<String>> reverseDictionary = buildReverseDictionary();
