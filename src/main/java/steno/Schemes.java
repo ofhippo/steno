@@ -18,9 +18,9 @@ public class Schemes {
             Collectors.toMap(a -> a, a -> VOWEL_SOUNDS.contains(a) ? ExtendedArpabet.VOWEL : a)
     );
 
-    public static Map<Arpabet, Enum> CRUNCHY = new HashMap<>(COLLAPSED_VOWELS);
+    public static Map<Arpabet, Enum> DUMB_13_STATE = new HashMap<>(COLLAPSED_VOWELS);
     static {
-        CRUNCHY.putAll(new ImmutableMap.Builder<Arpabet, Enum>()
+        DUMB_13_STATE.putAll(new ImmutableMap.Builder<Arpabet, Enum>()
                 .put(HH, B)
                 .put(D, DH)
                 .put(F, G)
@@ -37,9 +37,9 @@ public class Schemes {
     }
 
 
-    public static Map<Arpabet, Enum> DUMB_SUPER_CRUNCHY = new HashMap<>(COLLAPSED_VOWELS);
+    public static Map<Arpabet, Enum> DUMB_8_STATE = new HashMap<>(COLLAPSED_VOWELS);
     static {
-        DUMB_SUPER_CRUNCHY.putAll(new ImmutableMap.Builder<Arpabet, Enum>()
+        DUMB_8_STATE.putAll(new ImmutableMap.Builder<Arpabet, Enum>()
                 .put(HH, DH)
                 .put(B, DH)
                 .put(D, DH)
