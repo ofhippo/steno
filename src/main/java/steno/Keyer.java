@@ -15,8 +15,8 @@ public class Keyer {
         this.compressor = compressor;
     }
 
-    public double scoreDictionaryWithoutContext() {
-        double score = 0;
+    public PerformanceStats scoreDictionaryWithoutContext() {
+        final PerformanceStats performanceStats = new PerformanceStats();
         final Object[] entries = WordFrequency.DICTIONARY.entrySet().toArray();
         for (int i = 0; i < entries.length; i++) {
             if (i % 100 == 0) {
@@ -25,21 +25,21 @@ public class Keyer {
             Map.Entry<String, Double> wordAndFrequency = (Map.Entry<String, Double>) entries[i];
             final String word = wordAndFrequency.getKey();
             final int rank = predictionRankAfterEncodingAndDecoding(word, ImmutableList.of());
-            score += wordAndFrequency.getValue() * rank;
+            performanceStats.add(rank, wordAndFrequency.getValue(), word);
         }
-        return score;
+        return performanceStats;
     }
 
-    public double scoreText(String text) {
-        double score = 0;
+    public PerformanceStats scoreText(String text) {
+        final PerformanceStats performanceStats = new PerformanceStats();
         final List<String> words = Arrays.asList(text.replaceAll("[^a-zA-Z \n]", "").toLowerCase().split("\\s+"));
         for (int i = 0; i < words.size(); i++) {
             final String word = words.get(i);
             final List<String> context = words.subList(Math.max(0, i - 4), i);
             final int rank = predictionRankAfterEncodingAndDecoding(word, context);
-            score += rank;
+            performanceStats.add(rank, 1, word);
         }
-        return score / words.size();
+        return performanceStats;
     }
 
     private int predictionRankAfterEncodingAndDecoding(String word, List<String> context) {

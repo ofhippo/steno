@@ -16,41 +16,41 @@ public class KeyerTest {
     public void scoreDictionaryWithoutContext() {
         ArpabetCompressor compressor = new ArpabetCompressor(IDENTITY);
         Keyer keyer = new Keyer(compressor);
-        assertThat(keyer.scoreDictionaryWithoutContext()).isLessThan(0.25);
+        assertThat(keyer.scoreDictionaryWithoutContext().score()).isLessThan(0.25);
 
         compressor = new ArpabetCompressor(COLLAPSED_VOWELS);
         keyer = new Keyer(compressor);
-        assertThat(keyer.scoreDictionaryWithoutContext()).isBetween(0.25, 1d);
+        assertThat(keyer.scoreDictionaryWithoutContext().score()).isBetween(0.25, 1d);
     }
 
     @Test
     public void scoreText() {
         Keyer keyer = new Keyer(new ArpabetCompressor(IDENTITY));
-        assertThat(keyer.scoreText(SHORT_TEXT)).isEqualTo(0);
-        assertThat(keyer.scoreText(SHORT_TEXT_HOMOPHONE)).isEqualTo(0);
-        assertThat(keyer.scoreText(SHORT_TEXT_HOMOPHONE_LITTLE_CONTEXT)).isEqualTo(0);
-        assertThat(keyer.scoreText(HOLMES_LONG_TEXT)).isLessThan(0.5);
-        assertThat(keyer.scoreText(RED_RISING_LONG_TEXT)).isLessThan(0.5);
+        assertThat(keyer.scoreText(SHORT_TEXT).score()).isEqualTo(0);
+        assertThat(keyer.scoreText(SHORT_TEXT_HOMOPHONE).score()).isEqualTo(0);
+        assertThat(keyer.scoreText(SHORT_TEXT_HOMOPHONE_LITTLE_CONTEXT).score()).isEqualTo(0);
+        assertThat(keyer.scoreText(HOLMES_LONG_TEXT).score()).isLessThan(0.5);
+        assertThat(keyer.scoreText(RED_RISING_LONG_TEXT).score()).isLessThan(0.5);
 
         keyer = new Keyer(new ArpabetCompressor(COLLAPSED_VOWELS));
-        assertThat(keyer.scoreText(SHORT_TEXT)).isLessThan(1d);
-        assertThat(keyer.scoreText(SHORT_TEXT_HOMOPHONE)).isLessThan(1d);
-        assertThat(keyer.scoreText(SHORT_TEXT_HOMOPHONE_LITTLE_CONTEXT)).isLessThan(1d);
-        assertThat(keyer.scoreText(HOLMES_LONG_TEXT)).isLessThan(1d);
-        assertThat(keyer.scoreText(RED_RISING_LONG_TEXT)).isLessThan(1d);
+        assertThat(keyer.scoreText(SHORT_TEXT).score()).isLessThan(1d);
+        assertThat(keyer.scoreText(SHORT_TEXT_HOMOPHONE).score()).isLessThan(1d);
+        assertThat(keyer.scoreText(SHORT_TEXT_HOMOPHONE_LITTLE_CONTEXT).score()).isLessThan(1d);
+        assertThat(keyer.scoreText(HOLMES_LONG_TEXT).score()).isLessThan(1d);
+        assertThat(keyer.scoreText(RED_RISING_LONG_TEXT).score()).isLessThan(1d);
 
         keyer = new Keyer(new ArpabetCompressor(DUMB_13_STATE));
-        assertThat(keyer.scoreText(SHORT_TEXT)).isLessThan(1d);
-        assertThat(keyer.scoreText(SHORT_TEXT_HOMOPHONE)).isLessThan(1d);
-        assertThat(keyer.scoreText(SHORT_TEXT_HOMOPHONE_LITTLE_CONTEXT)).isLessThan(1.2d);
-        assertThat(keyer.scoreText(HOLMES_LONG_TEXT)).isLessThan(1d);
-        assertThat(keyer.scoreText(RED_RISING_LONG_TEXT)).isLessThan(1d);
+        assertThat(keyer.scoreText(SHORT_TEXT).score()).isLessThan(1d);
+        assertThat(keyer.scoreText(SHORT_TEXT_HOMOPHONE).score()).isLessThan(1d);
+        assertThat(keyer.scoreText(SHORT_TEXT_HOMOPHONE_LITTLE_CONTEXT).score()).isLessThan(1.2d);
+        assertThat(keyer.scoreText(HOLMES_LONG_TEXT).score()).isLessThan(1d);
+        assertThat(keyer.scoreText(RED_RISING_LONG_TEXT).score()).isLessThan(1d);
 
         keyer = new Keyer(new ArpabetCompressor(DUMB_8_STATE));
-        assertThat(keyer.scoreText(SHORT_TEXT)).isLessThan(1d);
-        assertThat(keyer.scoreText(SHORT_TEXT_HOMOPHONE)).isLessThan(1d);
-        assertThat(keyer.scoreText(SHORT_TEXT_HOMOPHONE_LITTLE_CONTEXT)).isLessThan(1.2d);
-        assertThat(keyer.scoreText(RED_RISING_LONG_TEXT)).isLessThan(1.2d);
-        assertThat(keyer.scoreText(HOLMES_LONG_TEXT)).isLessThan(1d);
+        assertThat(keyer.scoreText(SHORT_TEXT).score()).isLessThan(1d);
+        assertThat(keyer.scoreText(SHORT_TEXT_HOMOPHONE).score()).isLessThan(1d);
+        assertThat(keyer.scoreText(SHORT_TEXT_HOMOPHONE_LITTLE_CONTEXT).score()).isLessThan(1.2d);
+        assertThat(keyer.scoreText(RED_RISING_LONG_TEXT).score()).isLessThan(1.2d);
+        assertThat(keyer.scoreText(HOLMES_LONG_TEXT).score()).isLessThan(1d);
     }
 }
