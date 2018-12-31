@@ -25,7 +25,7 @@ public class PerformanceStats {
         }
     }
 
-    public double score() {
+    public double cost() {
         return scoreSum / frequencySum;
     }
 

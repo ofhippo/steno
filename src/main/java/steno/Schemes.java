@@ -60,6 +60,18 @@ public class Schemes {
                 .build());
     }
 
+    public static Map<Arpabet, Enum> random(int range) {
+        if (range > values().length) {
+            throw new IllegalArgumentException("Range too large");
+        }
+        final Arpabet[] arpabets = values();
+        final Map<Arpabet, Enum> results = new HashMap<>();
+        for (Arpabet arpabet : arpabets) {
+            results.put(arpabet, arpabets[(int) Math.floor(Math.random() * range)]);
+        }
+        return results;
+    }
+
     enum ExtendedArpabet {
         VOWEL
     }
