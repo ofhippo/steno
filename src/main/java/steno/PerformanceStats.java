@@ -9,12 +9,14 @@ public class PerformanceStats {
     public static final int MISSED_WORD_RANK_THRESHOLD = 8;
     private final int[] rankHistogram = new int[MAX_RANK_TO_TRACK];
     private double scoreSum = 0;
+    private double frequencySum = 0;
     private long count = 0;
     private List<String> missedWords = new ArrayList<>();
 
     public void add(int rank, double frequency, String word) {
-        rankHistogram[Math.min(MAX_RANK_TO_TRACK, rank)]++;
+        rankHistogram[Math.min(MAX_RANK_TO_TRACK-1, rank)]++;
         scoreSum += frequency * rank;
+        frequencySum += frequency;
         count++;
         if (rank > MISSED_WORD_RANK_THRESHOLD) {
             missedWords.add(word);
@@ -22,7 +24,7 @@ public class PerformanceStats {
     }
 
     public double score() {
-        return scoreSum / count;
+        return scoreSum / frequencySum;
     }
 
     public int[] getRankHistogram() {
@@ -31,6 +33,17 @@ public class PerformanceStats {
 
     public List<String> getMissedWords() {
         return missedWords;
+    }
+
+    public double getPercentageWithRankAtOrBelow(int rankThreshold) {
+        if (rankThreshold >= MAX_RANK_TO_TRACK) {
+            throw new RuntimeException("Must be below max");
+        }
+        double sum = 0;
+        for (int i = 0; i <= rankThreshold; i++) {
+            sum += rankHistogram[i];
+        }
+        return sum / count;
     }
 
     //https://stackoverflow.com/questions/13106906/how-to-create-a-histogram-in-java

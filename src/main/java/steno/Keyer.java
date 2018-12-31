@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Set;
 
 public class Keyer {
-    public static final int MAX_RANK_BEFORE_SPELLING = 2;
+    public static final int MAX_RANK_BEFORE_SPELLING = 5;
     private final ArpabetCompressor compressor;
 
     public Keyer(ArpabetCompressor compressor) {
@@ -19,7 +19,7 @@ public class Keyer {
         final PerformanceStats performanceStats = new PerformanceStats();
         final Object[] entries = WordFrequency.DICTIONARY.entrySet().toArray();
         for (int i = 0; i < entries.length; i++) {
-            if (i % 100 == 0) {
+            if (i % 1000 == 0) {
                 System.out.println(String.valueOf(i / (double) entries.length));
             }
             Map.Entry<String, Double> wordAndFrequency = (Map.Entry<String, Double>) entries[i];
@@ -45,12 +45,12 @@ public class Keyer {
     private int predictionRankAfterEncodingAndDecoding(String word, List<String> context) {
         final List<Arpabet> trueArpabets = Arpabet.fromWord(word);
         if (trueArpabets == null) {
-            return word.length(); //TODO
+            return word.length() + 5; //TODO
         }
         final List<Enum> compressed = compressor.encode(trueArpabets);
         final Set<String> possibleWords = compressor.decode(compressed);
         final List<String> rankedWordsByLikelihood = NextWordPredictor.sortByLikelihoodDescending(possibleWords, context);
         final int rank = rankedWordsByLikelihood.indexOf(word);
-        return rank >= 0 && rank <= MAX_RANK_BEFORE_SPELLING ? rank : word.length(); //TODO
+        return rank >= 0 && rank <= MAX_RANK_BEFORE_SPELLING ? rank : word.length() + 5; //TODO
     }
 }
