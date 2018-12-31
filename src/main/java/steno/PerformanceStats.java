@@ -1,17 +1,19 @@
 package steno;
 
-import java.util.ArrayList;
+import org.apache.commons.collections4.queue.CircularFifoQueue;
+
 import java.util.Arrays;
-import java.util.List;
 
 public class PerformanceStats {
     private static final int MAX_RANK_TO_TRACK = 20;
-    public static final int MISSED_WORD_RANK_THRESHOLD = 8;
+    private static final int MISSED_WORD_RANK_THRESHOLD = 8;
+    private static final int MAX_MISSED_WORDS_TO_TRACK = 100;
+
     private final int[] rankHistogram = new int[MAX_RANK_TO_TRACK];
     private double scoreSum = 0;
     private double frequencySum = 0;
     private long count = 0;
-    private List<String> missedWords = new ArrayList<>();
+    private CircularFifoQueue<String> missedWords = new CircularFifoQueue<>(MAX_MISSED_WORDS_TO_TRACK);
 
     public void add(int rank, double frequency, String word) {
         rankHistogram[Math.min(MAX_RANK_TO_TRACK-1, rank)]++;
@@ -31,7 +33,7 @@ public class PerformanceStats {
         return rankHistogram;
     }
 
-    public List<String> getMissedWords() {
+    public CircularFifoQueue<String> getMissedWords() {
         return missedWords;
     }
 
