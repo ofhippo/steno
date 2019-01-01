@@ -17,6 +17,9 @@ public class Schemes {
     public static Map<Arpabet, Enum> COLLAPSED_VOWELS = Arrays.stream(Arpabet.values()).collect(
             Collectors.toMap(a -> a, a -> VOWEL_SOUNDS.contains(a) ? ExtendedArpabet.VOWEL : a)
     );
+    public static Map<Arpabet, Enum> COLLAPSED_VOWELS_AND_CONSONANTS = Arrays.stream(Arpabet.values()).collect(
+            Collectors.toMap(a -> a, a -> VOWEL_SOUNDS.contains(a) ? ExtendedArpabet.VOWEL : ExtendedArpabet.CONSONANT)
+    );
 
     public static Map<Arpabet, Enum> DUMB_13_STATE = new HashMap<>(COLLAPSED_VOWELS);
     static {
@@ -73,7 +76,8 @@ public class Schemes {
     }
 
     enum ExtendedArpabet {
-        VOWEL
+        VOWEL,
+        CONSONANT
     }
 
 }

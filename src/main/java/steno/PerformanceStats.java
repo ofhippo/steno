@@ -6,22 +6,22 @@ import java.util.Arrays;
 
 public class PerformanceStats {
     private static final int MAX_RANK_TO_TRACK = 20;
-    private static final int MISSED_WORD_RANK_THRESHOLD = 8;
-    private static final int MAX_MISSED_WORDS_TO_TRACK = 100;
+    private static final int MISSED_WORD_STROKE_THRESHOLD = 10;
+    private static final int MAX_MISSED_WORDS_TO_TRACK = 1000;
 
-    private final int[] rankHistogram = new int[MAX_RANK_TO_TRACK];
+    private final int[] scoreHistogram = new int[MAX_RANK_TO_TRACK];
     private double scoreSum = 0;
     private double frequencySum = 0;
     private long count = 0;
-    private CircularFifoQueue<String> missedWords = new CircularFifoQueue<>(MAX_MISSED_WORDS_TO_TRACK);
+    private CircularFifoQueue<String> missedWordsWithStrokes = new CircularFifoQueue<>(MAX_MISSED_WORDS_TO_TRACK);
 
-    public void add(int rank, double frequency, String word) {
-        rankHistogram[Math.min(MAX_RANK_TO_TRACK-1, rank)]++;
-        scoreSum += frequency * rank;
+    public void add(int strokes, double frequency, String word) {
+        scoreHistogram[Math.min(MAX_RANK_TO_TRACK-1, strokes)]++;
+        scoreSum += frequency * strokes;
         frequencySum += frequency;
         count++;
-        if (rank > MISSED_WORD_RANK_THRESHOLD) {
-            missedWords.add(word);
+        if (strokes > MISSED_WORD_STROKE_THRESHOLD) {
+            missedWordsWithStrokes.add(word + ":" + String.valueOf(strokes));
         }
     }
 
@@ -29,31 +29,31 @@ public class PerformanceStats {
         return scoreSum / frequencySum;
     }
 
-    public int[] getRankHistogram() {
-        return rankHistogram;
+    public int[] getScoreHistogram() {
+        return scoreHistogram;
     }
 
-    public CircularFifoQueue<String> getMissedWords() {
-        return missedWords;
+    public CircularFifoQueue<String> getMissedWordsWithStrokes() {
+        return missedWordsWithStrokes;
     }
 
-    public double getPercentageWithRankAtOrBelow(int rankThreshold) {
+    public double getPercentageWithScoreAtOrBelow(int rankThreshold) {
         if (rankThreshold >= MAX_RANK_TO_TRACK) {
             throw new RuntimeException("Must be below max");
         }
         double sum = 0;
         for (int i = 0; i <= rankThreshold; i++) {
-            sum += rankHistogram[i];
+            sum += scoreHistogram[i];
         }
         return sum / count;
     }
 
     //https://stackoverflow.com/questions/13106906/how-to-create-a-histogram-in-java
     public void printRankHistogram() {
-        for (int range = 0; range < rankHistogram.length; range++) {
-            if (rankHistogram[range] > 0) {
+        for (int range = 0; range < scoreHistogram.length; range++) {
+            if (scoreHistogram[range] > 0) {
                 String label = range + " : ";
-                System.out.println(label + convertToStars(rankHistogram[range], Arrays.stream(rankHistogram).sum()));
+                System.out.println(label + convertToStars(scoreHistogram[range], Arrays.stream(scoreHistogram).sum()));
             }
         }
     }
