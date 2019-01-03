@@ -39,8 +39,30 @@ public class Schemes {
                 .build());
     }
 
-
     public static Map<Arpabet, Enum> DUMB_8_STATE = new HashMap<>(COLLAPSED_VOWELS);
+    static {
+        DUMB_8_STATE.putAll(new ImmutableMap.Builder<Arpabet, Enum>()
+                .put(HH, DH)
+                .put(B, DH)
+                .put(D, DH)
+                .put(G, L)
+                .put(F, L)
+                .put(K, L)
+                .put(M, N)
+                .put(R, N)
+                .put(P, T)
+                .put(S, T)
+                .put(V, Y)
+                .put(SH, Y)
+                .put(W, Y)
+                .put(CH, TH)
+                .put(Z, TH)
+                .put(ZH, TH)
+                .put(NG, JH)
+                .build());
+    }
+
+    public static Map<Arpabet, Enum> SMARTER_8_STATE = new HashMap<>(COLLAPSED_VOWELS);
     static {
         DUMB_8_STATE.putAll(new ImmutableMap.Builder<Arpabet, Enum>()
                 .put(HH, DH)

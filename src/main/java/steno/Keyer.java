@@ -22,9 +22,28 @@ public class Keyer {
                 System.out.println(String.valueOf(i / (double) entries.length));
             }
             Map.Entry<String, Double> wordAndFrequency = (Map.Entry<String, Double>) entries[i];
-            final String word = wordAndFrequency.getKey();
-            final int strokes = strokes(word, ImmutableList.of());
-            performanceStats.add(strokes, wordAndFrequency.getValue(), word);
+            String word = wordAndFrequency.getKey();
+            List<Arpabet> trueArpabets = Arpabet.fromWord(word);
+            int strokes = -1;
+            if (trueArpabets == null) {
+                word = word.replaceAll("'", "");
+                trueArpabets = Arpabet.fromWord(word);
+                if (trueArpabets == null) {
+                    strokes = word.length() * 5; //TODO
+                }
+            }
+            int rank = 100;
+            if (strokes > 0) {
+                final List<Enum> compressed = compressor.encode(trueArpabets);
+                final Set<String> possibleWords = compressor.decode(compressed);
+                final List<String> rankedWordsByLikelihood = NextWordPredictor.sortByLikelihoodDescending(possibleWords, ImmutableList.of());
+                rank = rankedWordsByLikelihood.indexOf(word);
+                if (rank < 0) {
+                    throw new RuntimeException("Missing word " + word);
+                }
+                strokes = getStrokes(compressed, rank);
+            }
+            performanceStats.add(strokes, rank, wordAndFrequency.getValue(), word);
         }
         return performanceStats;
     }
@@ -33,10 +52,30 @@ public class Keyer {
         final PerformanceStats performanceStats = new PerformanceStats();
         final List<String> words = Arrays.asList(scrub(text).toLowerCase().split("\\s+"));
         for (int i = 0; i < words.size(); i++) {
-            final String word = words.get(i);
+            String word = words.get(i);
             final List<String> context = words.subList(Math.max(0, i - 4), i);
-            final int strokes = strokes(word, context);
-            performanceStats.add(strokes, 1, word);
+            List<Arpabet> trueArpabets = Arpabet.fromWord(word);
+
+            int strokes = -1;
+            if (trueArpabets == null) {
+                word = word.replaceAll("'", "");
+                trueArpabets = Arpabet.fromWord(word);
+                if (trueArpabets == null) {
+                    strokes = word.length() * 5; //TODO
+                }
+            }
+            int rank = 100;
+            if (strokes < 0) {
+                final List<Enum> compressed = compressor.encode(trueArpabets);
+                final Set<String> possibleWords = compressor.decode(compressed);
+                final List<String> rankedWordsByLikelihood = NextWordPredictor.sortByLikelihoodDescending(possibleWords, context);
+                rank = rankedWordsByLikelihood.indexOf(word);
+                if (rank < 0) {
+                    throw new RuntimeException("Missing word " + word);
+                }
+                strokes = getStrokes(compressed, rank);
+            }
+            performanceStats.add(strokes, rank, 1, word);
         }
         return performanceStats;
     }
@@ -46,25 +85,6 @@ public class Keyer {
         return text.replaceAll("-", " ")
                 .replaceAll("’", "'")
                 .replaceAll("[^a-zA-Z \n']", "");
-    }
-
-    private int strokes(String word, List<String> context) {
-        List<Arpabet> trueArpabets = Arpabet.fromWord(word);
-        if (trueArpabets == null) {
-            word = word.replaceAll("'", "");
-            trueArpabets = Arpabet.fromWord(word);
-            if (trueArpabets == null) {
-                return word.length() * 5; //TODO
-            }
-        }
-        final List<Enum> compressed = compressor.encode(trueArpabets);
-        final Set<String> possibleWords = compressor.decode(compressed);
-        final List<String> rankedWordsByLikelihood = NextWordPredictor.sortByLikelihoodDescending(possibleWords, context);
-        final int rank = rankedWordsByLikelihood.indexOf(word);
-        if (rank < 0) {
-            throw new RuntimeException("Missing word " + word);
-        }
-        return getStrokes(compressed, rank);
     }
 
     private static int getStrokes(List<Enum> compressed, int rank) {
