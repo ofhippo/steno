@@ -91,7 +91,7 @@ ZH	seizure	S IY ZH ER
                     break;
                 } else {
                     final String[] wordAndPhonemes = lineJustRead.split("\t");
-                    final String word = wordAndPhonemes[0].toLowerCase();
+                    final String word = wordAndPhonemes[0].toLowerCase().replaceAll("\\(.*\\)", "");
                     final List<Arpabet> phonemes = Arrays.stream(wordAndPhonemes[1].split(" ")).map(Arpabet::valueOf).collect(Collectors.toList());
                     dictionary.put(word, phonemes);
                 }
@@ -102,5 +102,11 @@ ZH	seizure	S IY ZH ER
             e.printStackTrace();
         }
         return dictionary;
+    }
+
+    public static Map<Arpabet, Enum> convertToArpabetMap(List<Enum> enums) {
+        final List<Enum> copy = new ArrayList<>(enums);
+        return Arrays.stream(Arpabet.values())
+                .collect(Collectors.toMap(a -> a, a -> copy.remove(0)));
     }
 }

@@ -3,7 +3,7 @@ package steno;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class SchemeOptimizer {
+public class ArpabetSchemeOptimizer {
     private static final int POPULATION_SIZE = 100;
     private static final double SURVIVAL_RATE = 0.05;
     private static final double MUTATION_RATE = 0.01;
@@ -12,7 +12,7 @@ public class SchemeOptimizer {
     private List<Enum> bestEver;
     private double bestEverScore;
 
-    public SchemeOptimizer(int range) {
+    public ArpabetSchemeOptimizer(int range) {
         if (range > Arpabet.values().length) {
             throw new IllegalArgumentException("too large range");
         }
@@ -47,7 +47,7 @@ public class SchemeOptimizer {
         }
 
         if (numGenerations == 0) {
-            return convertToArpabetMap(bestEver);
+            return Arpabet.convertToArpabetMap(bestEver);
         } else {
             population = breed(fittest, POPULATION_SIZE - fittest.size());
             population.addAll(fittest); // TODO: cache scores for fittest, at least from last time
@@ -68,12 +68,6 @@ public class SchemeOptimizer {
 
     private Enum randomGene() {
         return Arpabet.values()[(int) Math.floor(Math.random() * range)];
-    }
-
-    private Map<Arpabet, Enum> convertToArpabetMap(List<Enum> enums) {
-        final List<Enum> copy = new ArrayList<>(enums);
-        return Arrays.stream(Arpabet.values())
-                .collect(Collectors.toMap(a -> a, a -> copy.remove(0)));
     }
 
     private List<List<Enum>> breed(List<List<Enum>> parents, int numOffspring) {
@@ -134,13 +128,13 @@ public class SchemeOptimizer {
     }
 
     private double calculateFitness(List<Enum> individual) {
-        return new Keyer(convertToArpabetMap(individual)).scoreText(Texts.THE_EGG).cost();
+        return KeyerScorer.scoreText(Texts.THE_EGG, new NineButtonArpabetKeyer(Arpabet.convertToArpabetMap(individual))).cost();
     }
 
     private List<List<Enum>> randomPopulation(int size) {
         final Set<List<Enum>> results = new HashSet<>(size);
         while (results.size() < size) {
-            results.add(new ArrayList<>(Schemes.random(range).values()));
+            results.add(new ArrayList<>(Schemes.randomArpabetScheme(range).values()));
         }
         return new ArrayList<>(results);
     }

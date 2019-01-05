@@ -3,21 +3,21 @@ package steno;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class ArpabetCompressor implements Compressor {
-    private final Map<Arpabet, Enum> scheme;
+public class AlphabetCompressor implements Compressor {
+    private Map<Alphabet, Enum> scheme;
     private Map<List<Enum>, Set<String>> compressedToPossibleWords;
 
-    public ArpabetCompressor(Map<Arpabet, Enum> scheme) {
+    public AlphabetCompressor(Map<Alphabet, Enum> scheme) {
         this.scheme = scheme;
     }
 
     @Override
     public List<Enum> encode(String word) {
-        return encode(Arpabet.fromWord(word));
+        return encode(Alphabet.fromWord(word.replaceAll("[^a-z]", "")));
     }
 
-    public List<Enum> encode(List<Arpabet> arpabets) {
-        return arpabets.stream().map(scheme::get).collect(Collectors.toList());
+    private List<Enum> encode (List<Alphabet> letters) {
+        return letters.stream().map(scheme::get).collect(Collectors.toList());
     }
 
     @Override
@@ -30,11 +30,10 @@ public class ArpabetCompressor implements Compressor {
 
     private void loadCompressedToPossibleWords() {
         compressedToPossibleWords = new HashMap<>();
-        final Map<String, List<Arpabet>> wordsToArpabets = Arpabet.getDictionary();
-        for (Map.Entry<String, List<Arpabet>> wordToArpabets : wordsToArpabets.entrySet()) {
-            final String word = wordToArpabets.getKey();
-            final List<Arpabet> arpabets = wordToArpabets.getValue();
-            final List<Enum> compressed = encode(arpabets);
+        final Set<String> wordsDictionary = Arpabet.getDictionary().keySet();
+        for (String word : wordsDictionary) {
+            final List<Alphabet> letters = Alphabet.fromWord(word.replaceAll("[^a-z]", ""));
+            final List<Enum> compressed = encode(letters);
             final Set<String> possibleWords = compressedToPossibleWords.computeIfAbsent(compressed, k -> new HashSet<>());
             possibleWords.add(word);
         }
