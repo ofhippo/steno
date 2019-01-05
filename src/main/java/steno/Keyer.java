@@ -10,6 +10,10 @@ import java.util.Set;
 public class Keyer {
     private final ArpabetCompressor compressor;
 
+    public Keyer(Map<Arpabet, Enum> scheme) {
+        this(new ArpabetCompressor(scheme));
+    }
+
     public Keyer(ArpabetCompressor compressor) {
         this.compressor = compressor;
     }
