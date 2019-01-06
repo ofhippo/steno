@@ -19,6 +19,7 @@ public class PerformanceStats {
     private double perfectSum = 0;
     private long count = 0;
     private CircularFifoQueue<Pair<String, Integer>> missedWordsWithRank = new CircularFifoQueue<>(MAX_MISSED_WORDS_TO_TRACK);
+    private CircularFifoQueue<Pair<String, Integer>> missedWordsWithStrokes = new CircularFifoQueue<>(MAX_MISSED_WORDS_TO_TRACK);
 
     public void add(int strokes, int rank, double weight, String word) {
         strokesHistogram[Math.min(MAX_SCORE_TO_TRACK - 1, strokes)]++;
@@ -31,6 +32,7 @@ public class PerformanceStats {
         count++;
         if (rank > MISSED_WORD_RANK_THRESHOLD) {
             missedWordsWithRank.add(new Pair(word, rank));
+            missedWordsWithStrokes.add(new Pair(word, strokes));
         }
     }
 
@@ -43,6 +45,12 @@ public class PerformanceStats {
         System.out.println("missed words with rank");
         System.out.println(String.join(" | ", missedWordsWithRank.stream()
                 .sorted(Comparator.comparingInt(wordAndRank -> ((Pair<String, Integer>) wordAndRank).getValue()).reversed())
+                .map(x -> x.getKey() + ":" + x.getValue())
+                .collect(Collectors.toList())));
+        System.out.println();
+        System.out.println("missed words with strokes");
+        System.out.println(String.join(" | ", missedWordsWithStrokes.stream()
+                .sorted(Comparator.comparingInt(wordAndStrokes -> ((Pair<String, Integer>) wordAndStrokes).getValue()).reversed())
                 .map(x -> x.getKey() + ":" + x.getValue())
                 .collect(Collectors.toList())));
         System.out.println();

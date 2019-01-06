@@ -10,7 +10,7 @@ public class KeyerScorer {
         final PerformanceStats performanceStats = new PerformanceStats();
         final List<String> words = Arrays.asList(scrub(text).toLowerCase().split("\\s+"));
         for (int i = 0; i < words.size(); i++) {
-            String word = words.get(i);
+            final String word = words.get(i);
             final List<String> context = words.subList(Math.max(0, i - 4), i);
 
             final List<Enum> compressed = compressor.encode(word);
@@ -19,16 +19,17 @@ public class KeyerScorer {
             int strokes = keyer.strokesToKey(compressed);
             if (possibleWords == null) {
                 rank = 1000;
-                strokes += keyer.strokesWhenDecodeFails(compressed);
+                strokes += keyer.strokesForFallback(word.replaceAll("'", ""));
             } else {
                 final List<String> rankedWordsByLikelihood = NextWordPredictor.sortByLikelihoodDescending(possibleWords, context);
                 rank = rankedWordsByLikelihood.indexOf(word);
-                final int maxRankBeforeFallback = keyer.getMaxRankBeforeFallback();
-                if (rank < 0 || rank >= maxRankBeforeFallback) {
-                    strokes += keyer.penaltyForExceedingMaxRank(word, compressed);
-                }
                 if (rank < 0) {
-                    rank = 100;
+                    rank = 1000;
+                }
+                strokes += keyer.getStrokesForRank(rank);
+
+                if (rank > keyer.getMaxRankBeforeFallback()) {
+                    strokes += keyer.strokesForFallback(word.replaceAll("'", ""));
                 }
             }
             performanceStats.add(strokes, rank, 1, word);

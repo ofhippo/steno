@@ -7,7 +7,7 @@ import java.util.Map;
 import static steno.Texts.THE_EGG;
 
 public class KeyerScorerTest {
-    private static final int NUM_TRIALS_FOR_RANDOM = 1;
+    private static final int NUM_TRIALS_FOR_RANDOM = 100;
 
 // TODO: Convert to use KeyerScorer
 //    @Test
@@ -65,7 +65,7 @@ public class KeyerScorerTest {
         final ArpabetSchemeOptimizer optimizer = new ArpabetSchemeOptimizer(2);
         final Map<Arpabet, Enum> best = optimizer.run(100);
         best.forEach((key, value) -> System.out.println("" + key.toString() + " : " + value.toString()));
-        final NineButtonArpabetKeyer keyer = new NineButtonArpabetKeyer( new ArpabetCompressor(best));
+        final NineButtonKeyer keyer = new NineButtonKeyer(new ArpabetCompressor(best));
         final PerformanceStats stats = KeyerScorer.scoreText(THE_EGG, keyer);
         System.out.println("strokes per word: " + String.valueOf(stats.cost()));
         System.out.println("perfect rank %: " + String.valueOf(stats.getPerfectPredictionPercentage()));
@@ -88,6 +88,11 @@ public class KeyerScorerTest {
         score(Schemes.ALPHABETIC_SPLIT);
     }
 
+    @Test
+    public void testRandom3StateAlphabetic() {
+        runTrialsAndScoreRandom(3);
+    }
+
     private void score(Map<Alphabet, Enum> scheme) {
         score(scheme, null);
     }
@@ -97,7 +102,7 @@ public class KeyerScorerTest {
     }
 
     private void score(Map<Alphabet, Enum> scheme, Integer rangeForRandom) {
-        NineButtonAlphabetKeyer keyer;
+        ThreeButtonKeyer keyer;
         double minCost = 1e9;
         PerformanceStats minStats = null;
         double sumCost = 0;
@@ -106,9 +111,9 @@ public class KeyerScorerTest {
         int numTrials = scheme == null ? NUM_TRIALS_FOR_RANDOM : 1;
         for (int i = 0; i < numTrials; i++) {
             if (scheme != null) {
-                keyer = new NineButtonAlphabetKeyer(new AlphabetCompressor(scheme));
+                keyer = new ThreeButtonKeyer(new AlphabetCompressor(scheme));
             } else {
-                keyer = new NineButtonAlphabetKeyer(new AlphabetCompressor(Schemes.randomAlphabetScheme(rangeForRandom)));
+                keyer = new ThreeButtonKeyer(new AlphabetCompressor(Schemes.randomAlphabetScheme(rangeForRandom)));
             }
             final PerformanceStats stats = KeyerScorer.scoreText(THE_EGG, keyer);
             final double cost = stats.cost();

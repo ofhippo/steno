@@ -128,7 +128,7 @@ public class ArpabetSchemeOptimizer {
     }
 
     private double calculateFitness(List<Enum> individual) {
-        return KeyerScorer.scoreText(Texts.THE_EGG, new NineButtonArpabetKeyer(Arpabet.convertToArpabetMap(individual))).cost();
+        return KeyerScorer.scoreText(Texts.THE_EGG, new NineButtonKeyer(new ArpabetCompressor(Arpabet.convertToArpabetMap(individual)))).cost();
     }
 
     private List<List<Enum>> randomPopulation(int size) {

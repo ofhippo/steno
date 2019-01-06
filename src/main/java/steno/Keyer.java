@@ -3,13 +3,14 @@ package steno;
 import java.util.List;
 
 public interface Keyer {
-    int penaltyForExceedingMaxRank(String word, List<Enum> compressed);
+    int strokesToKey(List<Enum> compressed);
+
+    int getStrokesForRank(int rank);
 
     int getMaxRankBeforeFallback();
 
-    int strokesWhenDecodeFails(List<Enum> compressed);
-
-    int strokesToKey(List<Enum> compressed);
+    int strokesForFallback(String word);
 
     Compressor getCompressor();
+
 }

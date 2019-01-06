@@ -2,17 +2,12 @@ package steno;
 
 import java.util.List;
 
-public class NineButtonAlphabetKeyer implements Keyer {
+public class NineButtonKeyer implements Keyer {
 
     private final Compressor compressor;
 
-    public NineButtonAlphabetKeyer(Compressor compressor) {
+    public NineButtonKeyer(Compressor compressor) {
         this.compressor = compressor;
-    }
-
-    @Override
-    public int penaltyForExceedingMaxRank(String word, List<Enum> compressed) {
-        return 5 + compressed.size();
     }
 
     @Override
@@ -21,13 +16,21 @@ public class NineButtonAlphabetKeyer implements Keyer {
     }
 
     @Override
-    public int strokesWhenDecodeFails(List<Enum> compressed) {
-        return 1 + compressed.size();
+    public int strokesForFallback(String word) {
+        return word.split("").length;
     }
 
     @Override
     public int strokesToKey(List<Enum> compressed) {
         return (int) Math.ceil(compressed.size() / 4.0);
+    }
+
+    @Override
+    public int getStrokesForRank(int rank) {
+        if (rank < -1 || rank > getMaxRankBeforeFallback()) {
+            return (int) Math.ceil(getMaxRankBeforeFallback() / 16.0);
+        }
+        return (int) Math.ceil(rank / 16.0);
     }
 
     @Override
