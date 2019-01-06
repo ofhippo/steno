@@ -26,7 +26,7 @@ public class NineButtonKeyer implements Keyer {
     }
 
     @Override
-    public int getStrokesForRank(int rank) {
+    public int strokesForRank(int rank) {
         if (rank < -1 || rank > getMaxRankBeforeFallback()) {
             return (int) Math.ceil(getMaxRankBeforeFallback() / 16.0);
         }

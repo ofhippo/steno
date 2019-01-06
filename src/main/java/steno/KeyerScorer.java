@@ -5,13 +5,16 @@ import java.util.List;
 import java.util.Set;
 
 public class KeyerScorer {
+
+    public static final int LOOK_BACK_LIMIT = 3;
+
     public static PerformanceStats scoreText(String text, Keyer keyer) {
         final Compressor compressor = keyer.getCompressor();
         final PerformanceStats performanceStats = new PerformanceStats();
         final List<String> words = Arrays.asList(scrub(text).toLowerCase().split("\\s+"));
         for (int i = 0; i < words.size(); i++) {
             final String word = words.get(i);
-            final List<String> context = words.subList(Math.max(0, i - 4), i);
+            final List<String> context = words.subList(Math.max(0, i - LOOK_BACK_LIMIT), i);
 
             final List<Enum> compressed = compressor.encode(word);
             final Set<String> possibleWords = compressor.decode(compressed);
@@ -26,7 +29,7 @@ public class KeyerScorer {
                 if (rank < 0) {
                     rank = 1000;
                 }
-                strokes += keyer.getStrokesForRank(rank);
+                strokes += keyer.strokesForRank(rank);
 
                 if (rank > keyer.getMaxRankBeforeFallback()) {
                     strokes += keyer.strokesForFallback(word.replaceAll("'", ""));

@@ -32,11 +32,11 @@ public class ThreeButtonKeyer implements Keyer {
     }
 
     @Override
-    public int getStrokesForRank(int rank) {
+    public int strokesForRank(int rank) {
         if (rank < 0 || rank > MAX_RANK_BEFORE_FALLBACK) {
             return MAX_RANK_BEFORE_FALLBACK;
         } else {
-            return rank;
+            return (int) Math.ceil(rank / 3.0);
         }
     }
 

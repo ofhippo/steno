@@ -8,6 +8,7 @@ import java.util.Map;
 import static steno.Alphabet.*;
 import static steno.Schemes.ExtendedArpabet.CLASS_B;
 import static steno.Schemes.ExtendedArpabet.CLASS_A;
+import static steno.Schemes.ExtendedArpabet.CLASS_C;
 
 public class Schemes {
 //    private static final ImmutableList<Arpabet> VOWEL_SOUNDS = ImmutableList.of(AA, AE, AH, AO, AW, AY, EH, ER, EY, IH, IY, OW, OY, UH, UW);
@@ -113,8 +114,7 @@ public class Schemes {
             .put(Z, CLASS_B)
             .build());
 
-
-    public static Map<Alphabet, Enum> ALPHABETIC_SPLIT = (new ImmutableMap.Builder<Alphabet, Enum>()
+    public static Map<Alphabet, Enum> TWO_CLASS_ALPHABETIC_SPLIT = (new ImmutableMap.Builder<Alphabet, Enum>()
             .put(A, CLASS_A)
             .put(B, CLASS_A)
             .put(C, CLASS_A)
@@ -141,6 +141,35 @@ public class Schemes {
             .put(X, CLASS_B)
             .put(Y, CLASS_B)
             .put(Z, CLASS_B)
+            .build());
+
+    public static Map<Alphabet, Enum> THREE_CLASS_ALPHABETIC_SPLIT = (new ImmutableMap.Builder<Alphabet, Enum>()
+            .put(A, CLASS_A)
+            .put(B, CLASS_A)
+            .put(C, CLASS_A)
+            .put(D, CLASS_A)
+            .put(E, CLASS_A)
+            .put(F, CLASS_A)
+            .put(G, CLASS_A)
+            .put(H, CLASS_B)
+            .put(I, CLASS_B)
+            .put(J, CLASS_B)
+            .put(K, CLASS_B)
+            .put(L, CLASS_B)
+            .put(M, CLASS_B)
+            .put(N, CLASS_B)
+            .put(O, CLASS_B)
+            .put(P, CLASS_C)
+            .put(Q, CLASS_C)
+            .put(R, CLASS_C)
+            .put(S, CLASS_C)
+            .put(T, CLASS_C)
+            .put(U, CLASS_C)
+            .put(V, CLASS_C)
+            .put(W, CLASS_C)
+            .put(X, CLASS_C)
+            .put(Y, CLASS_C)
+            .put(Z, CLASS_C)
             .build());
 
 
@@ -171,7 +200,8 @@ public class Schemes {
 
     enum ExtendedArpabet {
         CLASS_A,
-        CLASS_B
+        CLASS_B,
+        CLASS_C,
     }
 
 }

@@ -84,8 +84,13 @@ public class KeyerScorerTest {
     }
 
     @Test
-    public void testAlphabeticSplit() {
-        score(Schemes.ALPHABETIC_SPLIT);
+    public void test2ClassAlphabeticSplit() {
+        score(Schemes.TWO_CLASS_ALPHABETIC_SPLIT);
+    }
+
+    @Test
+    public void test3ClassAlphabeticSplit() {
+        score(Schemes.THREE_CLASS_ALPHABETIC_SPLIT);
     }
 
     @Test
@@ -130,9 +135,11 @@ public class KeyerScorerTest {
         }
         System.out.println("---RANGE " + String.valueOf(scheme) + "----");
         System.out.println("best strokes per word: " + String.valueOf(minCost));
-        System.out.println("avg strokes per word: " + String.valueOf(sumCost / NUM_TRIALS_FOR_RANDOM));
         System.out.println("best perfect rank %: " + String.valueOf(minCostPerfectPercentage));
-        System.out.println("avg perfect rank %: " + String.valueOf(sumPerfectPercentage / NUM_TRIALS_FOR_RANDOM));
+        if (numTrials > 1) {
+            System.out.println("avg strokes per word: " + String.valueOf(sumCost / NUM_TRIALS_FOR_RANDOM));
+            System.out.println("avg perfect rank %: " + String.valueOf(sumPerfectPercentage / NUM_TRIALS_FOR_RANDOM));
+        }
         System.out.println();
         minStats.printStrokesHistogram();
         minStats.printRankHistogram();

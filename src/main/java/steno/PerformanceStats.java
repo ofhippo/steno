@@ -11,6 +11,7 @@ public class PerformanceStats {
     private static final int MAX_SCORE_TO_TRACK = 20;
     private static final int MISSED_WORD_RANK_THRESHOLD = 3;
     private static final int MAX_MISSED_WORDS_TO_TRACK = 1000;
+    private static final int MISSED_WORD_STROKE_THRESHOLD = 10;
 
     private final int[] strokesHistogram = new int[MAX_SCORE_TO_TRACK];
     private final int[] rankHistogram = new int[MAX_SCORE_TO_TRACK];
@@ -32,6 +33,8 @@ public class PerformanceStats {
         count++;
         if (rank > MISSED_WORD_RANK_THRESHOLD) {
             missedWordsWithRank.add(new Pair(word, rank));
+        }
+        if (strokes > MISSED_WORD_STROKE_THRESHOLD) {
             missedWordsWithStrokes.add(new Pair(word, strokes));
         }
     }
