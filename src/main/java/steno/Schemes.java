@@ -6,19 +6,19 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static steno.Alphabet.*;
-import static steno.Schemes.ExtendedArpabet.CLASS_B;
-import static steno.Schemes.ExtendedArpabet.CLASS_A;
-import static steno.Schemes.ExtendedArpabet.CLASS_C;
+import static steno.Schemes.GENERIC_CLASS.CLASS_B;
+import static steno.Schemes.GENERIC_CLASS.CLASS_A;
+import static steno.Schemes.GENERIC_CLASS.CLASS_C;
 
 public class Schemes {
 //    private static final ImmutableList<Arpabet> VOWEL_SOUNDS = ImmutableList.of(AA, AE, AH, AO, AW, AY, EH, ER, EY, IH, IY, OW, OY, UH, UW);
 //
 //    public static Map<Arpabet, Enum> IDENTITY = Arrays.stream(Arpabet.values()).collect(Collectors.toMap(a -> a, a -> a));
 //    public static Map<Arpabet, Enum> COLLAPSED_VOWELS = Arrays.stream(Arpabet.values()).collect(
-//            Collectors.toMap(a -> a, a -> VOWEL_SOUNDS.contains(a) ? ExtendedArpabet.CLASS_A : a)
+//            Collectors.toMap(a -> a, a -> VOWEL_SOUNDS.contains(a) ? GENERIC_CLASS.CLASS_A : a)
 //    );
 //    public static Map<Arpabet, Enum> COLLAPSED_VOWELS_AND_CONSONANTS = Arrays.stream(Arpabet.values()).collect(
-//            Collectors.toMap(a -> a, a -> VOWEL_SOUNDS.contains(a) ? ExtendedArpabet.CLASS_A : ExtendedArpabet.CLASS_B)
+//            Collectors.toMap(a -> a, a -> VOWEL_SOUNDS.contains(a) ? GENERIC_CLASS.CLASS_A : GENERIC_CLASS.CLASS_B)
 //    );
 //
 //    public static Map<Arpabet, Enum> DUMB_13_STATE = new HashMap<>(COLLAPSED_VOWELS);
@@ -198,7 +198,7 @@ public class Schemes {
     }
 
 
-    enum ExtendedArpabet {
+    enum GENERIC_CLASS {
         CLASS_A,
         CLASS_B,
         CLASS_C,
