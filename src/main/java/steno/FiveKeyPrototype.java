@@ -22,6 +22,8 @@ import static steno.Schemes.GENERIC_CLASS.*;
  */
 
 public class FiveKeyPrototype extends JFrame implements KeyListener, ActionListener {
+    public static final Font SELECTION_FONT = new Font("Verdana", Font.BOLD, 48);
+    private static final Font MESSAGE_FONT = new Font("Verdana", Font.PLAIN, 14);
     JTextArea displayArea;
     JTextField typingArea;
     static final String newline = System.getProperty("line.separator");
@@ -120,6 +122,7 @@ public class FiveKeyPrototype extends JFrame implements KeyListener, ActionListe
      * Handle the key pressed event from the text field.
      */
     public void keyPressed(KeyEvent e) {
+        typingArea.setText("");
 //        displayInfo(e, "KEY PRESSED: ");
     }
 
@@ -201,22 +204,39 @@ public class FiveKeyPrototype extends JFrame implements KeyListener, ActionListe
     private void processCurrentWord() {
         if (!currentWord.isEmpty()) {
             final Set<String> possibleWords = keyer.getCompressor().decode(currentWord);
-            final List<String> context = message.subList(Math.max(0, message.size() - 3), message.size());
-            final List<String> rankedPossibleWords = NextWordPredictor.sortByLikelihoodDescending(possibleWords, context);
-            this.rankedPossibleWords = rankedPossibleWords;
-            printPossibleWordAtCurrentIndex();
-            currentWord = new ArrayList<>();
+            if (possibleWords == null) {
+                handleError();
+            } else {
+                final List<String> context = message.subList(Math.max(0, message.size() - 3), message.size());
+                final List<String> rankedPossibleWords = NextWordPredictor.sortByLikelihoodDescending(possibleWords, context);
+                this.rankedPossibleWords = rankedPossibleWords;
+                printPossibleWordAtCurrentIndex();
+                currentWord = new ArrayList<>();
+            }
         }
     }
 
     private void printPossibleWordAtCurrentIndex() {
         clearDisplay();
+        displayArea.setFont(SELECTION_FONT);
         print(rankedPossibleWords.get(currentIndex % rankedPossibleWords.size()));
     }
 
     private void printMessage() {
         clearDisplay();
+        displayArea.setFont(MESSAGE_FONT);
+
         print(Joiner.on(" ").join(message));
+    }
+
+
+    private void handleError() {
+        currentIndex = 0;
+        currentWord = new ArrayList<>();
+        rankedPossibleWords = null;
+        clearDisplay();
+        displayArea.setFont(SELECTION_FONT);
+        print("Error!");
     }
 
     private void addWord() {
