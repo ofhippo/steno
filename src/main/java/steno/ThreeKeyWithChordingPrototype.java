@@ -9,9 +9,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
-import java.util.Set;
+import java.util.stream.Collectors;
 
 import static steno.Schemes.GENERIC_CLASS.*;
 
@@ -24,10 +24,12 @@ public class ThreeKeyWithChordingPrototype extends JFrame implements KeyListener
     static final String newline = System.getProperty("line.separator");
     final Keyer keyer = new ThreeButtonKeyer(new AlphabetCompressor(Schemes.THREE_CLASS_ALPHABETIC_SPLIT));
     private List<String> rankedPossibleWords = null;
+    private List<String> selectedLetters = new ArrayList<>();
     private java.util.List<String> message = new ArrayList<>();
-    private int currentIndex = 0;
+    private int currentPossibleWordIndex = 0;
     private List<Enum> currentWord = new ArrayList<>();
     private List<Enum> currentChord = new ArrayList<>();
+    private Integer currentLetterSelectionIndex = null;
 
     public static void main(String[] args) {
         /* Use an appropriate Look and Feel */
@@ -175,9 +177,11 @@ public class ThreeKeyWithChordingPrototype extends JFrame implements KeyListener
                 break;
             case 2:
                 if (currentChord.containsAll(ImmutableList.of(CLASS_A, CLASS_C))) {
-                    currentIndex = 0;
+                    currentPossibleWordIndex = 0;
+                    currentLetterSelectionIndex = null;
                     currentWord = new ArrayList<>();
                     rankedPossibleWords = null;
+                    selectedLetters = new ArrayList<>();
                     printMessage();
                     break;
                 } else if (currentChord.containsAll(ImmutableList.of(CLASS_A, CLASS_B))) {
@@ -192,7 +196,7 @@ public class ThreeKeyWithChordingPrototype extends JFrame implements KeyListener
                 if (rankedPossibleWords == null) {
                     processCurrentWord();
                 } else {
-                    currentIndex++;
+                    currentPossibleWordIndex++;
                     printPossibleWordAtCurrentIndex();
                     break;
                 }
@@ -203,14 +207,60 @@ public class ThreeKeyWithChordingPrototype extends JFrame implements KeyListener
 
     private void nextLetter() {
         if (rankedPossibleWords == null) {
-
+            //TODO
         } else {
+            if (currentLetterSelectionIndex == null) {
+                currentLetterSelectionIndex = 0;
+            } else {
+                currentLetterSelectionIndex++;
+            }
+            if (!selectedLetters.isEmpty()) {
+                selectedLetters.remove(selectedLetters.size() - 1);
+            }
+            List<String> possibleWordsGivenSelection = filterToSelectedLetters(rankedPossibleWords);
+            final List<List<String>> rankedPossibleLetters = rankPossibleLetters(possibleWordsGivenSelection);
+            final List<String> possibleLetters = rankedPossibleLetters.get(selectedLetters.size());
+            final String newLetterToFilterOn = possibleLetters.get(currentLetterSelectionIndex % possibleLetters.size());
+            selectedLetters.add(newLetterToFilterOn);
+            currentPossibleWordIndex = 0;
+        }
+        printPossibleWordAtCurrentIndex();
+    }
 
+    private List<String> filterToSelectedLetters(List<String> rankedPossibleWords) {
+        if (selectedLetters.isEmpty()) {
+            return rankedPossibleWords;
+        } else {
+            return rankedPossibleWords.stream().filter(x -> x.startsWith(Joiner.on("").join(selectedLetters))).collect(Collectors.toList());
         }
     }
 
     private void selectLetter() {
+        selectedLetters.add("");
+        currentLetterSelectionIndex = null;
+        nextLetter();
+    }
 
+    private static List<List<String>> rankPossibleLetters(List<String> rankedPossibleWords) {
+        //TODO: weight letter counts by likelihood of containing word
+        final List<List<String>> splitWords = rankedPossibleWords.stream().map(word -> Arrays.asList(word.split(""))).collect(Collectors.toList());
+        final List<List<String>> results = new ArrayList<>();
+        final int maxCharacterLength = splitWords.stream().max(Comparator.comparingInt(List::size)).get().size();
+        for (int characterIndex = 0; characterIndex < maxCharacterLength; characterIndex++) {
+            final Map<String, Integer> lettersToCounts = new HashMap<>();
+            for (List<String> word : splitWords) {
+                if (characterIndex < word.size()) {
+                    final String letter = word.get(characterIndex);
+                    final Integer count = lettersToCounts.computeIfAbsent(letter, x -> 0);
+                    lettersToCounts.put(letter, count + 1);
+                }
+            }
+            results.add(lettersToCounts.entrySet().stream()
+                    .sorted(Comparator.comparingInt(Map.Entry::getValue))
+                    .map(Map.Entry::getKey)
+                    .collect(Collectors.toList()));
+        }
+        return results;
     }
 
     private void print(Object o) {
@@ -224,8 +274,7 @@ public class ThreeKeyWithChordingPrototype extends JFrame implements KeyListener
                 handleError();
             } else {
                 final java.util.List<String> context = message.subList(Math.max(0, message.size() - 3), message.size());
-                final List<String> rankedPossibleWords = NextWordPredictor.sortByLikelihoodDescending(possibleWords, context);
-                this.rankedPossibleWords = rankedPossibleWords;
+                this.rankedPossibleWords = NextWordPredictor.sortByLikelihoodDescending(possibleWords, context);
                 printPossibleWordAtCurrentIndex();
                 currentWord = new ArrayList<>();
             }
@@ -235,7 +284,12 @@ public class ThreeKeyWithChordingPrototype extends JFrame implements KeyListener
     private void printPossibleWordAtCurrentIndex() {
         clearDisplay();
         displayArea.setFont(SELECTION_FONT);
-        print(rankedPossibleWords.get(currentIndex % rankedPossibleWords.size()));
+        List<String> possibleWordsGivenSelection = filterToSelectedLetters(rankedPossibleWords);
+        final String wordToDisplay = possibleWordsGivenSelection.get(currentPossibleWordIndex % possibleWordsGivenSelection.size());
+        if (!selectedLetters.isEmpty()) {
+            print(wordToDisplay.substring(0, selectedLetters.size()));
+        }
+        print(wordToDisplay.substring(selectedLetters.size()));
     }
 
     private void printMessage() {
@@ -247,7 +301,8 @@ public class ThreeKeyWithChordingPrototype extends JFrame implements KeyListener
 
 
     private void handleError() {
-        currentIndex = 0;
+        currentPossibleWordIndex = 0;
+        currentLetterSelectionIndex = null;
         currentWord = new ArrayList<>();
         rankedPossibleWords = null;
         clearDisplay();
@@ -256,9 +311,12 @@ public class ThreeKeyWithChordingPrototype extends JFrame implements KeyListener
     }
 
     private void addWord() {
-        message.add(rankedPossibleWords.get(currentIndex));
-        currentIndex = 0;
+        List<String> possibleWordsGivenSelection = filterToSelectedLetters(rankedPossibleWords);
+        message.add(possibleWordsGivenSelection.get(currentPossibleWordIndex));
+        currentPossibleWordIndex = 0;
+        currentLetterSelectionIndex = null;
         rankedPossibleWords = null;
+        selectedLetters = new ArrayList<>();
         printMessage();
     }
 
@@ -272,7 +330,8 @@ public class ThreeKeyWithChordingPrototype extends JFrame implements KeyListener
     public void actionPerformed(ActionEvent e) {
         rankedPossibleWords = null;
         message = new ArrayList<>();
-        currentIndex = 0;
+        currentPossibleWordIndex = 0;
+        currentLetterSelectionIndex = null;
         currentWord = new ArrayList<>();
 
         //Clear the text components.
